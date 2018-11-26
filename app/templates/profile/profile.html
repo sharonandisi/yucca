@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as macro %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- <h3>{{user.surname|capitalize}}, {{user.first_name}}</h3>
+      <p>Email: {{user.email}}</p>
+      {% if user.linkedin %}
+      <p>LinkedIn:{{user.linkedin}}</p>
+      {% endif %} -->
+            <hr>
+            <h4>{{message}}</h4>
+            <h3>Pitches:</h3>
+            <p>{{macro.displayPitches(pitches)}}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
