@@ -1,0 +1,3 @@
+Hello {{user.first_name}}
+Welcome to Yucca
+We have just seen you have subscribed to the blog and we welcome you to the family. 
