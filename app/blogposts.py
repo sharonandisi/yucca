@@ -1,6 +1,6 @@
 
-from .models import Pitch
+from .models import Posts
 
-def get_pitch(id):
-  pitches = Pitch.query.filter_by(id=id)
-  return pitches
+def get_post(id):
+  posts = Posts.query.filter_by(id=id)
+  return posts

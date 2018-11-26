@@ -17,19 +17,19 @@ def login():
 
     flash('Invalid Username or Password')
 
-  title = 'Jitches Login'
+  title = 'Yucca Admin Login'
   return render_template('auth/login.html', login_form = login_form, title = title)
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
   form = RegistrationForm()
   if form.validate_on_submit():
-    user = User(email=form.email.data, username=form.username.data, password=form.password.data, first_name=form.fname.data, surname=form.lname.data)
+    admin = Admin(email=form.email.data, username=form.username.data, password=form.password.data, first_name=form.fname.data, surname=form.lname.data)
 
     db.session.add(user)
     db.session.commit()
 
-    mail_message('Welcome to Jitches', 'email/welcome_user', user.email, user=user)
+    mail_message('Welcome to Yucca', 'email/welcome_user', admin.email, user=user)
     return redirect(url_for('auth.login'))
     title='New Account'
 

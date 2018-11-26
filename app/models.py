@@ -4,12 +4,12 @@ from flask_login import UserMixin
 from datetime import datetime
 from . import login_manager
 
-@login_manager.user_loader
-def load_user(user_id):
-  return User.query.get(int(user_id))
+@login_manager.admin_loader
+def load_admin(admin_id):
+  return Admin.query.get(int(admin_id))
 
-class User(UserMixin, db.Model):
-  __tablename__='users'
+class Admin(AdminMixin, db.Model):
+  __tablename__='admin'
 
   id = db.Column(db.Integer, primary_key = True)
   username = db.Column(db.String(255))
@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
   pass_secure = db.Column(db.String(255))
   
   comments = db.relationship('Comments', backref='comments', lazy='dynamic')
-  pitch = db.relationship('Pitch', backref='pitch', lazy='dynamic')
+  post = db.relationship('Yucca', backref='post', lazy='dynamic')
 
   @property
   def password(self):
@@ -32,12 +32,12 @@ class User(UserMixin, db.Model):
   def verify_password(self, password):
     return check_password_hash(self.pass_secure, password)
 
-  def save_user(self):
+  def save_admin(self):
     db.session.add(self)
     db.session.commit()
 
   def __repr__(self):
-    return f'User {self.username}'
+    return f'Admin {self.username}'
 
 
 class Comments(db.Model):
@@ -45,9 +45,9 @@ class Comments(db.Model):
 
   id = db.Column(db.Integer, primary_key = True)
   comment = db.Column(db.String)
-  user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+  admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
   posted = db.Column(db.DateTime,default=datetime.utcnow)
-  pitch = db.Column(db.Integer, db.ForeignKey('pitch.id'))
+  post = db.Column(db.Integer, db.ForeignKey('posts.id'))
 
   def save_comment(self):
     db.session.add(self)
@@ -58,28 +58,28 @@ class Comments(db.Model):
     comments = Comments.query.filter_by(pitch_id=id).all()
     return comments
 
-class Pitch(db.Model):
-  __tablename__='pitch'
+class Posts(db.Model):
+  __tablename__='posts'
 
   id = db.Column(db.Integer, primary_key = True)
   title = db.Column(db.String(255))
   body = db.Column(db.String)
   posted = db.Column(db.DateTime,default=datetime.utcnow)
   category = db.Column(db.String)
-  user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+  user_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
 
   comments = db.relationship('Comments', backref='comments1', lazy='dynamic')
 
-  def save_pitch(self):
+  def save_posts(self):
     db.session.add(self)
     db.session.commit()
 
   @classmethod
-  def get_pitches(cls, id):
-    pitches = Pitch.query.filter_by(category_id=id).all()
-    return pitches
+  def get_posts(cls, id):
+    posts = Post.query.filter_by(category_id=id).all()
+    return posts
 
   def get_comments(self):
-    pitch = Pitch.query.filter_by(id = self.id).first()
-    comments = Comments.query.filter_by(pitch=pitch.id)
+    posts = Posts.query.filter_by(id = self.id).first()
+    comments = Comments.query.filter_by(posts=posts.id)
     return comments
