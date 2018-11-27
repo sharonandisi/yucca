@@ -4,11 +4,11 @@ from flask_login import UserMixin
 from datetime import datetime
 from . import login_manager
 
-@login_manager.admin_loader
+@login_manager.user_loader
 def load_admin(admin_id):
   return Admin.query.get(int(admin_id))
 
-class Admin(AdminMixin, db.Model):
+class Admin(UserMixin, db.Model):
   __tablename__='admin'
 
   id = db.Column(db.Integer, primary_key = True)
@@ -19,7 +19,7 @@ class Admin(AdminMixin, db.Model):
   pass_secure = db.Column(db.String(255))
   
   comments = db.relationship('Comments', backref='comments', lazy='dynamic')
-  post = db.relationship('Yucca', backref='post', lazy='dynamic')
+  posts = db.relationship('Posts', backref='posts', lazy='dynamic')
 
   @property
   def password(self):
@@ -55,7 +55,7 @@ class Comments(db.Model):
 
   @classmethod
   def get_comments(cls, id):
-    comments = Comments.query.filter_by(pitch_id=id).all()
+    comments = Comments.query.filter_by(posts_id=id).all()
     return comments
 
 class Posts(db.Model):
@@ -64,11 +64,12 @@ class Posts(db.Model):
   id = db.Column(db.Integer, primary_key = True)
   title = db.Column(db.String(255))
   body = db.Column(db.String)
+  photo_path = db.Column(db.String(255))
   posted = db.Column(db.DateTime,default=datetime.utcnow)
   category = db.Column(db.String)
-  user_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
+  admin_id = db.Column(db.Integer, db.ForeignKey('admin.id'))
 
-  comments = db.relationship('Comments', backref='comments1', lazy='dynamic')
+  comments = db.relationship('Comments', backref='post_comments', lazy='dynamic')
 
   def save_posts(self):
     db.session.add(self)
@@ -76,7 +77,7 @@ class Posts(db.Model):
 
   @classmethod
   def get_posts(cls, id):
-    posts = Post.query.filter_by(category_id=id).all()
+    posts = Posts.query.filter_by(category_id=id).all()
     return posts
 
   def get_comments(self):

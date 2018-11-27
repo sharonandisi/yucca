@@ -1,23 +1,27 @@
-rom flask import render_template, request, redirect, url_for, abort, flash
+from flask import render_template, request, redirect, url_for, abort, flash
 from . import main
-from ..models import User, Pitch, Comments
+from ..models import Admin, Posts, Comments
 from flask_login import login_required, current_user
-from .. import db
+from .. import db,photos
 import markdown2
 from datetime import datetime
-from .forms import PitchForm, CommentForm
-from ..pitches import get_pitch
+from .forms import PostForm, CommentForm
+ 
 
 @main.route('/')
 def index():
   posts=Posts.query.all()
-  title = 'Welcome to Yucca'
-  return render_template('index.html', title=title, posts=posts)
+  print(posts[0].title)
+  # default_post=Posts(id=1, title='J', body='JJ', category='J', admin_id=1)
+  # Posts.save_posts(default_post)
+  print(posts)
+  title = 'Welcome tto Yucca'
+  return render_template('index.html', title=title, posts=posts, message='meh,i work')
 
 @main.route('/profile/<uname>/<id>')
 @login_required
 def profile(id, uname):
-  admin = admin.query.filter_by(username = uname)
+  admin = Admin.query.filter_by(username = uname)
   posts = Posts.query.filter_by(id=id)
   message='You don\'t have any pitches to show you failure!'
   if posts is not 0:
@@ -31,14 +35,16 @@ def profile(id, uname):
 def write_post():
   form = PostForm()
   if form.validate_on_submit():
-    post = Post(title=form.title.data, body=form.body.data, category=form.category.data)
+    filename = photos.save(request.files['photo_path'])
+    path = f'photos/{filename}'
+    posts = Posts(title=form.title.data, body=form.body.data, photo_path=path, category=form.category.data)
 
-    db.session.add(pitch)
+    db.session.add(posts)
     db.session.commit()
     return redirect(url_for('main.index'))
 
   title = 'New Post'
-  return render_template('new_post.html', post=form, title=title)
+  return render_template('new_post.html', blog_form =form, title=title)
 
 @main.route('/comment', methods=['GET', 'POST'])
 def write_comment():
@@ -65,7 +71,7 @@ def get_sweets():
   posts = Posts.query.filter_by(category='swt')
   title='Sweets'
   message='There are no posts in the Sweetss section. Go back to home to continue viewing.'
-  if pitches is not 0:
+  if posts is not 0:
     message='Sweets'
   return render_template('index.html', posts=posts, title=title, message=message)
 
@@ -87,6 +93,21 @@ def get_conundrums():
     message='Kitchen Conundrums'
   return render_template('index.html', posts=posts, title=title, message=message)
 
+@main.route('/view_posts/<id>', methods=['GET','POST'])
+def view_post(id):
+  form = CommentForm()
+  if form.validate_on_submit():
+    comment = Comments(comment=form.comment.data)
+    comment.save_comment()
+    return redirect(url_for('main.view_post', id=id))
+
+  posts = Posts.query.filter_by(id=id).first()
+  comments = Comments.query.filter_by(id=id).all()
+  message='No comments'
+  if posts is not 0:
+    message=f'You\'re now viewing the comments. Click home to continue browsing'
+  return render_template('post.html', message=message, comments=comments, posts=posts, comment_form=form)
+
 @main.route('/view-comments/<id>')
 def view_comments(id):
   posts = Posts.query.filter_by(id=id)
@@ -100,4 +121,4 @@ def view_comments(id):
 @login_required
 def post_delete(id):
   posts = Posts.query.filter_by(id=id)
-  return post.delete_post()
+  return posts.delete_post()

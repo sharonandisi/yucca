@@ -1,0 +1,30 @@
+{% macro displayPosts(posts_list) %}
+{% for post in posts_list %}
+<div class="container">
+    <div class="card" style="width:500px">
+        <img class="card-img-top" src="static/{{post.photo_path}}" alt="Card image">
+        <div class="card-img-overlay">
+            <h6 class="card-title">{{post.category}}</h6>
+            <h4 class="card-title">{{post.title}}</h4>
+            <p class="card-text">{{post.body | truncate(20)}}</p>
+            <a href="/view_posts/{{post.id}}" class="btn btn-primary">read more</a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endmacro %}
+
+{% macro displayComments(comments_list) %}
+{% for comment in comments_list %}
+<div class="container">title
+    <div class="col-xs-12 col-sm-4 col-md-2 col-lg-12">
+        <ul>
+            <li>
+                <h1>{{comment.comment}}</h1>
+            </li>
+        </ul>
+        <h6>Posted At: {{comment.posted}}</h6>
+    </div>
+</div>
+{% endfor %}
+{% endmacro %}

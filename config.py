@@ -2,9 +2,10 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://sharonandisi:sharon@localhost/yucca'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://sharon:sharon@localhost/yucca'
     SIMPLEMDE_JS_IIFE = True
     SIMPLEMDE_USE_CDN = True
+    UPLOADED_PHOTOS_DEST = 'app/static/photos'
 
     # Email Configurations
     MAIL_SERVER = 'smtp.googlemail.com'
@@ -19,13 +20,13 @@ class Config:
         pass
 
 class TestConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql+pyscopg2://sharonandisi:sharon@localhost/yucca_test'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+pyscopg2://sharon:sharon@localhost/yucca_test'
 
 class ProdConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 class DevConfig(Config):
-    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://sharonandisi:sharon@localhost/yucca'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://sharon:sharon@localhost/yucca'
     DEBUG = True
 
 config_options = {

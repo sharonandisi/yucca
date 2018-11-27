@@ -1,0 +1,30 @@
+{% extends 'base.html'%}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block content%}
+
+<div class="container">
+    <h3><code>{{posts.title}}</code></h3>
+    <p>{{posts.category}}</p>
+    <img src = "/static/{{posts.photo_path}}">
+    <p>{{posts.body}}</p>
+
+</div>
+<div class="row">
+    <div class="col-md-8" >
+        {{wtf.quick_form(comment_form)}}
+    </div>
+</div>
+
+{% for comment in comments%}
+<div class="container">title
+    <div class="col-xs-12 col-sm-4 col-md-2 col-lg-12">
+        <ul>
+            <li>
+                <h1>{{comment.comment}}</h1>
+            </li>
+        </ul>
+        <h6>Posted At: {{comment.posted}}</h6>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

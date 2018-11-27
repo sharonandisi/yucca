@@ -1,10 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, TextAreaField, FileField, SubmitField, IntegerField, SelectField
 from wtforms.validators import Required
 
 class PostForm(FlaskForm):
   title=StringField('Post Title')
   body=TextAreaField('Blog Post')
+  photo_path = FileField('post photo')
   author=TextAreaField('Your name as it\'ll be displayed')
   category=SelectField('Category', choices=[('san', 'Snack_and_Drinks'), ('Sweets', 'swt'), ('meals', 'meals'), ('con', 'conundrums')])
   submit=SubmitField('Submit')
